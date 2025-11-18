@@ -1,46 +1,54 @@
-class Solution {
-
 struct TrieNode{
     unordered_map<char, TrieNode*> children;
-    bool endOfWord;
-    TrieNode(){
-        endOfWord = false;
-    }
+    bool endOfWord = false;
+    TrieNode() = default;
 };
 
+class Trie{
+   public:
+        TrieNode* root;
+        Trie(){
+            root = new TrieNode();
+        }
+        void insert(string word){
+            TrieNode* curr = root;
+            for(char c: word){
+                if(!curr->children.count(c)){
+                    curr->children[c] = new TrieNode();
+                }
+                curr = curr->children[c];
+            }
+            curr->endOfWord = true;
+        }
+};
+
+class Solution {
+
+
 private:
-    TrieNode* root;
     vector<vector<char>> board;
     unordered_set<string> res;
-
-    void insert(string word){
-        TrieNode* curr = root;
-        for(char c: word){
-            if(!curr->children.count(c)){
-                curr->children[c] = new TrieNode();
-            }
-            curr = curr->children[c];
-        }
-        curr->endOfWord = true;
-    }
-
+    int m, n;
 
     void dfs(int x, int y, string currWord, TrieNode* node){
-        int m, n;
-        m = board.size(), n = board[0].size();
-        if(x < 0 || y < 0 || x >= m || y >= n || board[x][y] == '#') return;
-        if(!node->children.count(board[x][y])) return;
-        node = node->children[board[x][y]];
-        currWord += board[x][y];
+        char c = board[x][y];
+        if(!node->children.count(c)) return;
+        node = node->children[c];
+
+        currWord += c;
         if(node->endOfWord){
             res.insert(currWord);
         }
-        char c = board[x][y];
+
         board[x][y] = '#';
-        dfs(x+1, y, currWord, node);
-        dfs(x-1, y, currWord, node);
-        dfs(x, y+1, currWord, node);
-        dfs(x, y-1, currWord, node);
+        vector<pair<int,int>> dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+        for(auto [dx, dy]: dirs){
+           int nx = x + dx;
+           int ny = y + dy;
+           if(nx >= 0 && nx < m && ny >= 0 && ny < n && board[nx][ny] != '#'){
+               dfs(nx, ny, currWord, node);
+           }
+        }
         board[x][y] = c;
     }
 
@@ -49,14 +57,15 @@ sfs
 */
 public:
     vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
-        this->root = new TrieNode();
+        Trie* trie = new Trie();
         this->board = board;
-        for (auto word: words){
-            insert(word);
+        m = board.size(), n = board[0].size();
+        for(auto word: words){
+            trie->insert(word);
         }
-        int m,n;
         m = board.size();
         n = board[0].size();
+        TrieNode* root = trie->root;
         for(int i = 0; i < m; i++){
             for(int j = 0; j < n; j++){
                 if(root->children.count(board[i][j])){
