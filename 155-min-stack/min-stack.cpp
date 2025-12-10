@@ -3,42 +3,38 @@
 s1:[ ]
 s2:[ ]
 
+
+    
+
 */
 class MinStack {
+private:
+    stack<pair<int,int>> s1;
 public:
-    stack<int> s1;
-    stack<int> min_so_far;
+    
     MinStack() {
         
     }
     
     void push(int val) {
         if(s1.empty()){
-            min_so_far.push(val);
+            s1.push({val, val});
+            return;
         }
-        else{
-            if(val <= min_so_far.top()){
-                min_so_far.push(val);
-            }
-        }
-        s1.push(val);
-    
+        int minSoFar = s1.top().second;
+        s1.push({val, min(val, minSoFar)});
     }
     
     void pop() {
-       int val = s1.top(); 
-       s1.pop();
-       if(val == min_so_far.top()){
-            min_so_far.pop();
-       }
+        s1.pop();
     }
     
     int top() {
-        return s1.top();
+        return s1.top().first;
     }
     
     int getMin() {
-        return min_so_far.top();     
+        return s1.top().second;
     }
 };
 
