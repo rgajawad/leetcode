@@ -1,43 +1,31 @@
 class Solution {
 public:
     int networkDelayTime(vector<vector<int>>& times, int n, int k) {
-
         vector<vector<pair<int,int>>> adj(n+1);
-
-        for(auto edge: times){
-            int u, v, w;
-            u = edge[0], v = edge[1], w = edge[2];
+        for(auto time: times){
+            int u,v,w;
+            u = time[0], v = time[1], w = time[2];
             adj[u].push_back({v, w});
         }
-        
-        const int INF = 1e9;
-        vector<int> dist(n+1, INF);
-        dist[k] = 0;
-
-        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
-        pq.push({0, k});
-
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+        pq.push({0,k});
+        vector<int> shortestDistance(n+1, INT_MAX);
+        shortestDistance[k]=0;
         while(pq.size()){
-            auto [d, u] = pq.top();
+            auto [cost,node] = pq.top();
             pq.pop();
-
-            if (d > dist[u]) continue;
-
-            for(auto [v, w] : adj[u]){
-                if(dist[u] + w  < dist[v]){
-                    dist[v] = dist[u] + w;
-                    pq.push({dist[v], v});
-                }
+            for(auto [v, w] : adj[node]){
+                int new_cost = w + cost;
+                if(new_cost >= shortestDistance[v]) continue;
+                shortestDistance[v] = new_cost;
+                pq.push({new_cost,v});
             }
         }
-
-        int max_dist = dist[1];
+        int dist = 0;
         for(int i = 1; i <= n; i++){
-            int d = dist[i];
-            if(d == INF) return -1;
-            max_dist = max(d, max_dist);
+            if(shortestDistance[i] == INT_MAX) return -1;
+            dist = max(dist,shortestDistance[i]);
         }
-        return max_dist;
-
+        return dist;
     }
 };
