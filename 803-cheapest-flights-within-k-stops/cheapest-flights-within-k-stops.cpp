@@ -9,7 +9,7 @@ public:
             from = f[0], to = f[1], price = f[2];
             adj[from].push_back({to, price});
         }
-        vector<vector<int>> shortestDistance(101, vector<int>(k+2,INT_MAX));
+        vector<vector<int>> shortestDistance(n, vector<int>(k+2,INT_MAX));
         shortestDistance[src][0] = 0;
         // 
         priority_queue<tuple<int,int,int>, vector<tuple<int,int,int>>, greater<tuple<int,int,int>>> pq;
