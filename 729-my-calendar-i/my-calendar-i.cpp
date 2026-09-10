@@ -10,10 +10,12 @@ public:
     
     bool book(int startTime, int endTime) {
         auto iter = mp.lower_bound(startTime);
-        if(iter != mp.begin()) iter = prev(iter);
-        while(iter != mp.end()){
-            if(endTime > iter->first && startTime < iter->second) return false;
-            iter++;
+        if(iter != mp.begin()){
+            auto prevIter = prev(iter);
+            if(startTime < prevIter->second && endTime > prevIter->first) return false;
+        }
+        if(iter!= mp.end()){
+            if(startTime < iter->second && endTime > iter->first) return false;
         }
         mp[startTime] = endTime;
         return true;
