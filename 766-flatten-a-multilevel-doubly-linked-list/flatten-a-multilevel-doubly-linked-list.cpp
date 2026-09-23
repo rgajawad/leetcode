@@ -11,25 +11,33 @@ public:
 
 class Solution {
 public:
+/*
+
+1 -> 2 -> 3 
+*/
+
+    Node* flattenDFS(Node* head){
+        Node* curr = head; 
+        Node* temp = curr->next;
+        Node* chld = curr->child;
+        Node* currTail = curr;
+        if(chld){
+            curr->next = chld;
+            chld->prev = curr;
+            curr->child = nullptr;
+            currTail = flattenDFS(chld);
+        }
+        if(temp){
+            currTail->next = temp;
+            temp->prev = currTail;
+            currTail = flattenDFS(temp);
+        }
+        return currTail;
+    }
+
     Node* flatten(Node* head) {
         if(!head) return nullptr;
-        Node *dummy = new Node(0);
-        Node *curr = dummy;
-        stack<Node*> st;
-        st.push(head);
-        while(st.size()){
-            Node *node = st.top();
-            st.pop();
-
-            if(node->next) st.push(node->next);
-            if(node->child) st.push(node->child);
-
-            curr->next = node;
-            node->prev = curr;
-            node->child = nullptr;
-            curr = node;
-        }
-        head->prev = nullptr;
+        flattenDFS(head);
         return head;
     }
 };
