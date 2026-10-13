@@ -1,56 +1,61 @@
 class WordDictionary {
-
-    struct TrieNode{
-        unordered_map<char, TrieNode*> children;
-        bool endOfWord;
-        TrieNode(){
-            endOfWord=false;
-        }
+    struct Node {
+        Node* ch[26] = {};
+        bool isEnd = false;
     };
-    
-    
-private:
-    TrieNode *root;
-    bool searchHelper(TrieNode* curr, string word, int index){
-        if(index == word.size()){
-            return curr->endOfWord;
-        }
-        char c = word[index];
-        if(c == '.'){
-            for(auto &p : curr->children){
-                if(searchHelper(p.second, word, index+1)){
-                    return true;
-                }
-            }
-            return false;
-        }
-        else{
-            if(!curr->children.count(c)){
-                return false;
-            }
-            return searchHelper(curr->children[c],word, index+1);
-        }
-    } 
-    
+
 public:
-    WordDictionary() {
-        root = new TrieNode();
+    WordDictionary()  {
+        root = new Node();
     }
     
     void addWord(string word) {
-        TrieNode* curr = root;
-        for(char c : word){
-            if (!curr->children.count(c)){
-                curr->children[c] = new TrieNode();
-            }
-            curr = curr->children[c];
+        Node* cur = root;
+        for (char c : word) {
+            int i = c - 'a';
+            if (!cur->ch[i]) cur->ch[i] = new Node();
+            cur = cur->ch[i];
         }
-        curr->endOfWord= true;
+        cur->isEnd = true;
+        
     }
     
     bool search(string word) {
-       return searchHelper(root, word, 0); 
+        return searchHelper(root, word);
     }
+    /**
+    
+    */
+
+    bool searchHelper(Node *node, string word){
+        if(word.empty()){
+            return node->isEnd;
+        }
+        Node* cur = node;
+        for (int j = 0; j < word.size(); j++) {
+            char c = word[j];
+            if(c == '.'){
+                for(int i = 0; i < 26; i++){
+                    if(cur->ch[i]){
+                        if(searchHelper(cur->ch[i], word.substr(j+1))) return true;
+                    }
+                }
+                return false;
+            }
+            int i = c - 'a';
+            if (!cur->ch[i]) return false;
+            cur = cur->ch[i];
+        }
+        return cur->isEnd;
+
+
+    }
+
+
+private:
+    Node *root;
+
+    
 };
 
 /**
@@ -58,4 +63,4 @@ public:
  * WordDictionary* obj = new WordDictionary();
  * obj->addWord(word);
  * bool param_2 = obj->search(word);
- */
+ **/
