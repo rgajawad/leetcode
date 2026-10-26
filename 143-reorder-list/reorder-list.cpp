@@ -40,11 +40,11 @@ public:
         5->4
 
        */ 
-        while(p1){
+        while(p2){
             ListNode *tmp1 =p1->next;
-            ListNode *tmp2 = p2 ? p2->next : nullptr;
+            ListNode *tmp2 = p2->next ;
             p1->next = p2;
-            if(p2) p2->next = tmp1;
+            p2->next = tmp1;
             p1 = tmp1;
             p2 = tmp2;
         }
