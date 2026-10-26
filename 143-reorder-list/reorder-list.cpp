@@ -7,52 +7,50 @@
  *     ListNode(int x) : val(x), next(nullptr) {}
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
-
-
- L0 -> L1 -> L2 -> ...... Ln-1 -> Ln
-
- Using fast and slow pointers, we can get the middle of the linked list
-
- L0->L1->L2->L3
-
- L0->L1
- L2->L3 
-
  */
 class Solution {
 public:
-
-    ListNode* reverse(ListNode* head){
-        ListNode* prev = NULL; 
-        ListNode* curr = head;
-        while(curr){
-            ListNode* temp = curr->next;
-            curr->next=prev;
-            prev=curr;
-            curr=temp;
-        }
-        return prev;
-    }
     void reorderList(ListNode* head) {
         ListNode* slow = head;
         ListNode* fast = head->next;
         while(fast && fast->next){
-            fast = fast->next->next;
             slow = slow->next;
+            fast = fast->next->next;
         }
-        ListNode* temp = slow->next;
-        slow->next = NULL;
-        ListNode* head2 = reverse(temp);
-        ListNode* p1 = head;
-        ListNode* p2 = head2;
-        
-        while(p1 && p2){
-            auto p1_temp = p1->next;
-            auto p2_temp = p2->next;
+
+        ListNode *p1 = head;
+        ListNode *p2 = slow->next;
+        slow->next = nullptr;
+
+
+        ListNode *prev = nullptr;
+        ListNode* curr = p2;
+        while(curr){
+            ListNode *tmp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+
+        //reconnect lists
+        p2 = prev; 
+        /*
+
+        1->2->3
+        5->4
+
+       */ 
+        while(p1){
+            ListNode *tmp1 =p1->next;
+            ListNode *tmp2 = p2 ? p2->next : nullptr;
             p1->next = p2;
-            p2->next = p1_temp;
-            p1 = p1_temp, p2 = p2_temp;
+            if(p2) p2->next = tmp1;
+            p1 = tmp1;
+            p2 = tmp2;
         }
+
+
+
 
     }
 };
