@@ -1,46 +1,40 @@
 /*
 
-freq -> []
 
-1-> []
-2-> []
-3->[]
+0 
 
-max_freq_so_far
-
-key -> freq
-
-
-
+1 -> 5 , 7, 4
+2 ->5, 7
+3-> 5
 */
+
 class FreqStack {
 private:
-    unordered_map<int,vector<int>> freq2arr;
+    int maxFreq;
     unordered_map<int,int> num2freq;
-    int max_freq_so_far = 0;
-
-
+    unordered_map<int,vector<int>> freq2num;
 public:
     FreqStack() {
-        
+        maxFreq = 0;
     }
     
     void push(int val) {
-       num2freq[val]+=1; 
-       int freq = num2freq[val];
-       freq2arr[freq].push_back(val);
-       max_freq_so_far = max(max_freq_so_far, freq);
+        num2freq[val]++;
+        maxFreq = max(num2freq[val], maxFreq);
+        int freq = num2freq[val];
+        freq2num[freq].push_back(val);
     }
     
     int pop() {
-        int popped_val = freq2arr[max_freq_so_far].back();
-        freq2arr[max_freq_so_far].pop_back();
-        num2freq[popped_val] -= 1;
-        if(freq2arr[max_freq_so_far].empty()){
-            freq2arr.erase(max_freq_so_far);
-            max_freq_so_far -= 1;
+        int val = freq2num[maxFreq].back();
+        freq2num[maxFreq].pop_back();
+        num2freq[val]--;
+        if(freq2num[maxFreq].empty()) {
+            freq2num.erase(maxFreq);
+            maxFreq--;  
         }
-        return popped_val;
+       return val;
+
 
     }
 };
